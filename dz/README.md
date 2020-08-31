@@ -15,25 +15,36 @@
 Также нужно скачать и разархивировать последний исходники для openssl - он
 потребуется при сборке
 ```
-[root@packages ~]# wget https://www.openssl.org/source/latest.tar.gz
-[root@packages ~]# tar -xvf latest.tar.gz
+# wget https://www.openssl.org/source/latest.tar.gz
+# tar -xvf latest.tar.gz
 ```
 Заранее поставим все зависимости чтобы в процессе сборки не было ошибок
 ```
-[root@packages ~]# yum-builddep rpmbuild/SPECS/nginx.spec
+# yum-builddep rpmbuild/SPECS/nginx.spec
 ```
 Поправить сам spec файл чтобы NGINX собирался с необходимыми нам опциями
 ```
-[root@packages ~]# vi rpmbuild/SPECS/nginx.spec
+# vi rpmbuild/SPECS/nginx.spec
 ```
 Внесем поправку в блок %build такую запись --with-openssl=/root/openssl-1.1.1g /
 Соберем RPM пакет
 ```
-[root@packages ~]# rpmbuild -bb rpmbuild/SPECS/nginx.spec
+# rpmbuild -bb rpmbuild/SPECS/nginx.spec
 ```
 После сборки RPM пакета проверим и установим
 ```
-[root@packages ~]# yum localinstall -y rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm
-[root@packages ~]# systemctl start nginx
-[root@packages ~]# systemctl status nginx
+# yum localinstall -y rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm
+# systemctl start nginx
+# systemctl status nginx
+```
+#### Создим свой репозиторий и разместим там ранее собранный RPM
+
+Создадим деректорию repo
+```
+[root@packages ~]# mkdir /usr/share/nginx/html/repo
+```
+Копируем туда RPM
+```
+# cp rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm /usr/share/nginx/html/repo/
+# wget http://www.percona.com/downloads/percona-release/redhat/0.1-6/percona-release-0.1-6.noarch.rpm -O /usr/share/nginx/html/repo/percona-release-0.1-6.noarch.rpm
 ```

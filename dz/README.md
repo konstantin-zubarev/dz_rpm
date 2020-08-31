@@ -5,12 +5,12 @@
 На данном стенде создам свой RPM из исходников. Для примера расмотрим пакет NGINX и соберем его с поддержкой openssl.
 Загрузим SRPM пакет NGINX для дальнейшей работы над ним:
 ```
-[root@packages ~]# wget https://nginx.org/packages/centos/7/SRPMS/nginx-1.14.1-1.el7_4.ngx.src.rpm
+# wget https://nginx.org/packages/centos/7/SRPMS/nginx-1.14.1-1.el7_4.ngx.src.rpm
 ```
 При установке такого пакета в домашней директории создается древо каталогов для
 сборки:
 ```
-[root@packages ~]# rpm -i nginx-1.14.1-1.el7_4.ngx.src.rpm
+# rpm -i nginx-1.14.1-1.el7_4.ngx.src.rpm
 ```
 Также нужно скачать и разархивировать последний исходники для openssl - он
 потребуется при сборке
@@ -47,4 +47,26 @@
 ```
 # cp rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm /usr/share/nginx/html/repo/
 # wget http://www.percona.com/downloads/percona-release/redhat/0.1-6/percona-release-0.1-6.noarch.rpm -O /usr/share/nginx/html/repo/percona-release-0.1-6.noarch.rpm
+```
+Инициализируем репозиторий командой:
+```
+# createrepo /usr/share/nginx/html/repo/
+```
+Для прозрачности настроим в NGINX доступ к листингу каталога. Добавим в блоке location / директиву autoindex on
+```
+# vi /etc/nginx/conf.d/default.conf
+```
+Проверяем синтаксис и перезапускаем NGINX:
+```
+# nginx -t
+# nginx -s reload
+```
+Добавим свой репозиторий в /etc/yum.repos.d:
+```
+echo -e "[otus] \nname=otus-linux \nbaseurl=http://localhost/repo \ngpgcheck=0 \nenabled=1" > /etc/yum.repos.d/otus.repo
+
+```
+Убедимся что репозиторий подключился и посмотрим что в нем есть:
+```
+# yum repolist enabled | grep otus
 ```

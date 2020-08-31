@@ -70,3 +70,11 @@ echo -e "[otus] \nname=otus-linux \nbaseurl=http://localhost/repo \ngpgcheck=0 \
 ```
 # yum repolist enabled | grep otus
 ```
+Выгружаю vagrant box в vagrant cloud.
+
+#### Для проверки ДЗ
+Развернем vagrantfile и запустим команду
+```
+yum install percona-release
+```
+Во время установки можно увидить из какого репозитория (otus) будет производиться установка.
